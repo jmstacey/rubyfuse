@@ -1,0 +1,58 @@
+FuseFS 0.6
+==========
+
+  * FuseFS.mount_under() now takes FUSE options as optional arguments, such as
+    'allow_other' and 'allow_root'
+  * rmdir now works. (Whoops!)
+
+FuseFS 0.5.1
+============
+
+  * Bugfix for dealing with raw files (Thanks, Kent Sibilev)
+
+FuseFS 0.5
+==========
+
+  * Fixed for FUSE 2.4. direct_io turned from a mount option in 2.3 to a lib
+    option in 2.4.
+  * _why_the_lucky_stiff's railsfs.rb added to the samples/ dir.
+  * FuseRoot#raw_open is called with the path and "r" "w" "rw" for read or
+    write modes, along with "a" if it is called for appending.
+  * If raw_open returns true, FuseFS will call raw_read, raw_write, and
+    raw_close at necessary points. (See API.txt)
+  * FuseRoot#size is optionally called to determine file sizes, should the
+    user want a file size to be reported as anything other than 0.
+
+FuseFS 0.4
+==========
+
+  * Stronger and more robust handling of editor swap files, but still
+    incomplete.
+  * Peppered with debug statements.
+  * A bit cleaner method of calling ruby functions.
+  * rf_rename fixed. Whoops!
+
+FuseFS 0.3
+==========
+
+  * read_file borked FuseFS when a binary file was returned. Instead of using
+    strdup, it now mallocs according to the returned size, as appropriate.
+  * Addition of sample/openurifs.rb
+  * 'touch file' emptied a file, since it opened and then released without
+    writing. I added a 'modified' flag to fix this.
+  * 'touch' method call added, and called when a program attempts to modify
+    a file's time.
+  * 'executable?' check added in case programmer wants to the file to report
+    itself as executable to the filesystem.
+  * vim and emacs swap files are not passed to FuseFS =).
+
+FuseFS 0.2
+==========
+
+  * Fix call for deleting files from 'remove' to 'delete' to match API spec.
+  * Addition of sample/yamlfs.rb
+
+FuseFS 0.1
+==========
+
+  Initial import.
