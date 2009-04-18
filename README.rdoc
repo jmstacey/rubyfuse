@@ -2,7 +2,7 @@
 
 * Wiki: http://wiki.github.com/jmstacey/rubyfuse
 * Repository: http://github.com/jmstacey/rubyfuse
-* Bug Tracker: http://jmstacey.lighthouseapp.com/projects/29478-fuseruby/overview
+* Issues: http://github.com/jmstacey/rubyfuse/issues
 
 == Description
 
