@@ -805,7 +805,7 @@ class ToplevelInstaller
     @options['config-opt'] = []
 
     while i = ARGV.shift
-      if /\A--?\z/ =~ i
+      if /^--with[-_]/ =~ i
         @options['config-opt'] = ARGV.dup
         break
       end
