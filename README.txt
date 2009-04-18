@@ -34,6 +34,13 @@ Install
   your favorite directory by supplying setup.rb some options.
   Try "ruby setup.rb --help".
 
+	If you need to supply alternative path information for the
+	FUSE libraries, follow this example:
+	
+		# ruby setup.rb config --with-fuse-dir=/opt/local/include --with-fuse-lib=/opt/local/lib
+		# ruby setup.rb setup
+		# sudo ruby setup.rb install
+
 
 Usage
 -----
