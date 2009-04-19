@@ -1,41 +1,54 @@
-require 'lib/fusefs'
-require 'rake/gempackagetask'
+require 'rubygems'
+require 'rake'
 
-Spec = Gem::Specification.new do |s|
-  s.name = 'FuseFS'
-  s.version = '0.7.0'
-  s.summary = 'Define filesystems entirely in Ruby.'
-  s.description = <<EOF
-FuseFS lets ruby programmers define filesystems entirely in Ruby.
-That is - with FuseFS, you can now create a mounted filesystem entirely
-defined in Ruby! Included are proof of concept filesystems:
-SQL table mappings, YAML filesystem, and more!
-EOF
-  s.files = FileList[
-    'API.txt', 'Changes.txt', 'COPYRIGHT', 'ext/**/*', 'lib/**/*', 'Makefile',
-    'README.txt', 'sample/**/*', 'setup.rb', 'TODO'
-  ]
-  s.extensions << 'ext/extconf.rb'
-  s.require_path = 'lib'
-  s.autorequire = 'fusefs'
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gem|
+    gem.name        = "RubyFuse"
+    gem.summary     = "Define filesystems entirely in Ruby."
+    gem.description = "RubyFuse lets programmers create a mounted filesystems entirely defined in Ruby."
+    gem.email       = "jon@jonsview.com"
+    gem.homepage    = "http://jonsview.com/projects/rubyfuse"
+    gem.authors     = ["Jon Stacey", "Greg Millam"]
 
-  s.author = 'Greg Millam'
-  s.email = 'walker@deafcode.com'
-  s.rubyforge_project = 'FuseFS'
-
+    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+  end
+rescue LoadError
+  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
 end
 
-Rake::GemPackageTask.new(Spec) do |p|
-end
+# require 'rake/testtask'
+# Rake::TestTask.new(:test) do |test|
+#   test.libs << 'lib' << 'test'
+#   test.pattern = 'test/**/*_test.rb'
+#   test.verbose = true
+# end
+# 
+# begin
+#   require 'rcov/rcovtask'
+#   Rcov::RcovTask.new do |test|
+#     test.libs << 'test'
+#     test.pattern = 'test/**/*_test.rb'
+#     test.verbose = true
+#   end
+# rescue LoadError
+#   task :rcov do
+#     abort "RCov is not available. In order to run rcov, you must: sudo gem install spicycode-rcov"
+#   end
+# end
 
-task :export do
-  dirname = "fusefs-#{FuseFS::VERSION}"
-  sh %{cvs export -D now -d #{dirname} PageTemplate}
-end
+
+# task :default => :test
+
+# task :export do
+#   dirname = "fusefs-#{FuseFS::VERSION}"
+#   sh %{cvs export -D now -d #{dirname} PageTemplate}
+# end
 
 task :all do
   ruby %{setup.rb config}
   ruby %{setup.rb setup}
+  ruby %{setup.rb install}
 end
 
 task :default => [ :all ]
@@ -46,4 +59,19 @@ end
 
 task :clean do
   ruby %{setup.rb clean}
+end
+
+require 'rake/rdoctask'
+Rake::RDocTask.new do |rdoc|
+  if File.exist?('VERSION.yml')
+    config = YAML.load(File.read('VERSION.yml'))
+    version = "#{config[:major]}.#{config[:minor]}.#{config[:patch]}"
+  else
+    version = ""
+  end
+
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title = "RubyFuse #{version}"
+  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('lib/**/*.rb')
 end
