@@ -4,7 +4,7 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name        = "RubyFuse"
+    gem.name        = "rubyfuse"
     gem.summary     = "Define filesystems entirely in Ruby."
     gem.description = "RubyFuse lets programmers create a mounted filesystems entirely defined in Ruby."
     gem.email       = "jon@jonsview.com"

@@ -18,11 +18,16 @@ Requirements
 Install
 -------------
 
-		$ sudo ruby setup.rb
+RubyFuse is available as a Ruby Gem. Installation is as easy as:
 
-This simple command will install the library under the default Ruby libraries location. You can also install files into your favorite directory by supplying setup.rb some options. Try "ruby setup.rb --help".
+		$ gem sources -a http://gems.github.com
+		$ gem install jmstacey-rubyfuse
 
-If you need to supply alternative path information for the FUSE libraries, follow this example:
+Manually installations can be performed with this:
+
+		$ ruby setup.rb
+		
+More advanced installation options are available with setup.rb. Try "ruby setup.rb --help". If you need to supply alternative path information for the FUSE libraries, follow this example:
 
 		$ ruby setup.rb config --with-fuse-dir=/opt/local/include --with-fuse-lib=/opt/local/lib
 		$ ruby setup.rb setup
@@ -31,9 +36,9 @@ If you need to supply alternative path information for the FUSE libraries, follo
 Usage
 -------------
 
-Some sample ruby filesystems are listed in "samples/" When you run a RubyFuse script, it will listen on a socket indefinitely, so either background the script or open another terminal to explore the filesystem.
+Some sample ruby filesystems are listed in "samples/". When you run a RubyFuse script, it will listen on a socket indefinitely, so either background the script or open another terminal to explore the filesystem.
 
-API.rdoc contains more usage information.
+API.markdown contains more usage information along with the official RDoc.
 
 Copyright
 ------------
