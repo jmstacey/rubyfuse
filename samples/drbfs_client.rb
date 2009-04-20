@@ -8,7 +8,7 @@
 # Author: Kent Sibilev
 
 require 'drb'
-require 'fusefs'
+require 'rubyfuse'
 
 unless (1..2).include? ARGV.size
   puts "Usage: #$0 <directory> <uri>"
@@ -21,6 +21,6 @@ uri = ARGV.shift || 'druby://0.0.0.0:7777'
 DRb.start_service(nil, nil)
 root = DRbObject.new_with_uri(uri)
 
-FuseFS.set_root(root)
-FuseFS.mount_under(dir)
-FuseFS.run
+RubyFuse.set_root(root)
+RubyFuse.mount_under(dir)
+RubyFuse.run

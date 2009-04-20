@@ -23,7 +23,7 @@
 #include <stdarg.h>
 #endif
 
-#include "fusefs_fuse.h"
+#include "rubyfuse_fuse.h"
 
 /* init_time
  *
@@ -32,7 +32,7 @@ time_t init_time;
 
 /* opened_file
  *
- * FuseFS uses the opened_file list to keep files that are written to in
+ * RubyFuse uses the opened_file list to keep files that are written to in
  * memory until they are closed before passing it to FuseRoot.write_to,
  * and file contents returned by FuseRoot.read_file until FUSE informs
  * us it is safe to close.
@@ -72,7 +72,7 @@ static char   *created_file = NULL;
 static time_t  created_time = 0;
 
 /* Ruby Constants constants */
-VALUE cFuseFS      = Qnil; /* FuseFS class */
+VALUE cRubyFuse      = Qnil; /* RubyFuse class */
 VALUE cFSException = Qnil; /* Our Exception. */
 VALUE FuseRoot     = Qnil; /* The root object we call */
 
@@ -133,7 +133,7 @@ debug(char *msg,...) {
 
 /* catch_editor_files
  *
- * If this is a true value, then FuseFS will attempt to capture
+ * If this is a true value, then RubyFuse will attempt to capture
  * editor swap files and handle them itself, so the ruby filesystem
  * is not passed swap files it doesn't care about.
  */
@@ -310,10 +310,10 @@ rf_mintval(const char *path,ID method,char *methname,int def) {
  *
  * Used when: 'ls', and before opening a file.
  *
- * FuseFS will call: directory? and file? on FuseRoot
+ * RubyFuse will call: directory? and file? on FuseRoot
  *   to determine if the path in question is pointing
  *   at a directory or file. The permissions attributes
- *   will be 777 (dirs) and 666 (files) xor'd with FuseFS.umask
+ *   will be 777 (dirs) and 666 (files) xor'd with RubyFuse.umask
  */
 
 static int
@@ -435,7 +435,7 @@ rf_getattr(const char *path, struct stat *stbuf) {
  *
  * Used when: 'ls'
  *
- * FuseFS will call: 'directory?' on FuseRoot with the given path
+ * RubyFuse will call: 'directory?' on FuseRoot with the given path
  *   as an argument. If the return value is true, then it will in turn
  *   call 'contents' and expects to receive an array of file contents.
  *
@@ -506,7 +506,7 @@ rf_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
  *
  * Used when: This is called when a file is created.
  *
- * Note that this is actually almost useless to FuseFS, so all we do is check
+ * Note that this is actually almost useless to RubyFuse, so all we do is check
  *   if a path is writable? and if so, return true. The open() will do the
  *   actual work of creating the file.
  */
@@ -606,18 +606,18 @@ rf_mknod(const char *path, mode_t umode, dev_t rdev) {
  *
  * Used when: A file is opened for read or write.
  *
- * If called to open a file for reading, then FuseFS will call "read_file" on
+ * If called to open a file for reading, then RubyFuse will call "read_file" on
  *   FuseRoot, and store the results into the linked list of "opened_file"
  *   structures, so as to provide the same file for mmap, all excutes of
  *   read(), and preventing more than one call to FuseRoot.
  *
- * If called on a file opened for writing, FuseFS will first double check
+ * If called on a file opened for writing, RubyFuse will first double check
  *   if the file is writable to by calling "writable?" on FuseRoot, passing
  *   the path. If the return value is a truth value, it will create an entry
  *   into the opened_file list, flagged as for writing.
  *
  * If called with any other set of flags, this will return -ENOPERM, since
- *   FuseFS does not (currently) need to support anything other than direct
+ *   RubyFuse does not (currently) need to support anything other than direct
  *   read and write.
  */
 static int
@@ -849,12 +849,12 @@ rf_open(const char *path, struct fuse_file_info *fi) {
  *
  * Used when: A file is no longer being read or written to.
  *
- * If release is called on a written file, FuseFS will call 'write_to' on
+ * If release is called on a written file, RubyFuse will call 'write_to' on
  *   FuseRoot, passing the path and contents of the file. It will then
  *   clear the file information from the in-memory file storage that
- *   FuseFS uses to prevent FuseRoot from receiving incomplete files.
+ *   RubyFuse uses to prevent FuseRoot from receiving incomplete files.
  *
- * If called on a file opened for reading, FuseFS will just clear the
+ * If called on a file opened for reading, RubyFuse will just clear the
  *   in-memory copy of the return value from rf_open.
  */
 static int
@@ -963,7 +963,7 @@ rf_touch(const char *path, struct utimbuf *ignore) {
  *
  * Used when: a file is renamed.
  *
- * When FuseFS receives a rename command, it really just removes the old file
+ * When RubyFuse receives a rename command, it really just removes the old file
  *   and creates the new file with the same contents.
  */
 static int
@@ -1097,7 +1097,7 @@ rf_unlink(const char *path) {
  *
  * Used when: a file is truncated.
  *
- * If this is an existing file?, that is writable? to, then FuseFS will
+ * If this is an existing file?, that is writable? to, then RubyFuse will
  *   read the file, truncate it, and call write_to with the new value.
  */
 static int
@@ -1358,36 +1358,36 @@ static struct fuse_operations rf_oper = {
 
 /* rf_set_root
  *
- * Used by: FuseFS.set_root
+ * Used by: RubyFuse.set_root
  *
- * This defines FuseRoot, which is the crux of FuseFS. It is required to
+ * This defines FuseRoot, which is the crux of RubyFuse. It is required to
  *   have the methods "directory?" "file?" "contents" "writable?" "read_file"
  *   and "write_to"
  */
 VALUE
 rf_set_root(VALUE self, VALUE rootval) {
-  if (self != cFuseFS) {
-    rb_raise(cFSException,"Error: 'set_root' called outside of FuseFS?!");
+  if (self != cRubyFuse) {
+    rb_raise(cFSException,"Error: 'set_root' called outside of RubyFuse?!");
     return Qnil;
   }
 
-  rb_iv_set(cFuseFS,"@root",rootval);
+  rb_iv_set(cRubyFuse,"@root",rootval);
   FuseRoot = rootval;
   return Qtrue;
 }
 
 /* rf_handle_editor
  *
- * Used by: FuseFS.handle_editor <value>
+ * Used by: RubyFuse.handle_editor <value>
  *
- * If passed a false value, then FuseFS will not attempt to handle editor
+ * If passed a false value, then RubyFuse will not attempt to handle editor
  * swap files on its own, instead passing them to the filesystem as
  * normal files.
  */
 VALUE
 rf_handle_editor(VALUE self, VALUE troo) {
-  if (self != cFuseFS) {
-    rb_raise(cFSException,"Error: 'set_root' called outside of FuseFS?!");
+  if (self != cRubyFuse) {
+    rb_raise(cFSException,"Error: 'set_root' called outside of RubyFuse?!");
     return Qnil;
   }
 
@@ -1429,9 +1429,9 @@ rf_valid_option(char *option) {
 
 /* rf_mount_to
  *
- * Used by: FuseFS.mount_to(dir)
+ * Used by: RubyFuse.mount_to(dir)
  *
- * FuseFS.mount_to(dir) calls FUSE to mount FuseFS under the given directory.
+ * RubyFuse.mount_to(dir) calls FUSE to mount RubyFuse under the given directory.
  */
 VALUE
 rf_mount_to(int argc, VALUE *argv, VALUE self) {
@@ -1443,8 +1443,8 @@ rf_mount_to(int argc, VALUE *argv, VALUE self) {
 
   snprintf(opts,1024,"direct_io");
 
-  if (self != cFuseFS) {
-    rb_raise(cFSException,"Error: 'mount_to' called outside of FuseFS?!");
+  if (self != cRubyFuse) {
+    rb_raise(cFSException,"Error: 'mount_to' called outside of RubyFuse?!");
     return Qnil;
   }
 
@@ -1468,23 +1468,23 @@ rf_mount_to(int argc, VALUE *argv, VALUE self) {
     strcpy(opts,opts2);
   }
 
-  rb_iv_set(cFuseFS,"@mountpoint",mountpoint);
-  fusefs_setup(STR2CSTR(mountpoint), &rf_oper, opts);
+  rb_iv_set(cRubyFuse,"@mountpoint",mountpoint);
+  rubyfuse_setup(STR2CSTR(mountpoint), &rf_oper, opts);
   return Qtrue;
 }
 
 /* rf_fd
  *
- * Used by: FuseFS.fuse_fd(dir)
+ * Used by: RubyFuse.fuse_fd(dir)
  *
- * FuseFS.fuse_fd returns the file descriptor of the open handle on the
+ * RubyFuse.fuse_fd returns the file descriptor of the open handle on the
  *   /dev/fuse object that is utilized by FUSE. This is crucial for letting
  *   ruby keep control of the script, as it can now use IO.select, rather
  *   than turning control over to fuse_main.
  */
 VALUE
 rf_fd(VALUE self) {
-  int fd = fusefs_fd();
+  int fd = rubyfuse_fd();
   if (fd < 0)
     return Qnil;
   return INT2NUM(fd);
@@ -1492,17 +1492,17 @@ rf_fd(VALUE self) {
 
 /* rf_process
  *
- * Used for: FuseFS.process
+ * Used for: RubyFuse.process
  *
- * rf_process, which calls fusefs_process, is the other crucial portion to
- *   keeping ruby in control of the script. fusefs_process will read and
+ * rf_process, which calls rubyfuse_process, is the other crucial portion to
+ *   keeping ruby in control of the script. rubyfuse_process will read and
  *   process exactly one command from the fuse_fd. If this is called when
  *   there is no incoming data waiting, it *will* hang until it receives a
  *   command on the fuse_fd
  */
 VALUE
 rf_process(VALUE self) {
-  if (fusefs_process()) {
+  if (rubyfuse_process()) {
     return Qtrue;
   }
   return Qfalse;
@@ -1511,7 +1511,7 @@ rf_process(VALUE self) {
 
 /* rf_uid and rf_gid
  *
- * Used by: FuseFS.reader_uid and FuseFS.reader_gid
+ * Used by: RubyFuse.reader_uid and RubyFuse.reader_gid
  *
  * These return the UID and GID of the processes that are causing the
  *   separate Fuse methods to be called. This can be used for permissions
@@ -1519,7 +1519,7 @@ rf_process(VALUE self) {
  */
 VALUE
 rf_uid(VALUE self) {
-  int fd = fusefs_uid();
+  int fd = rubyfuse_uid();
   if (fd < 0)
     return Qnil;
   return INT2NUM(fd);
@@ -1527,7 +1527,7 @@ rf_uid(VALUE self) {
 
 VALUE
 rf_gid(VALUE self) {
-  int fd = fusefs_gid();
+  int fd = rubyfuse_gid();
   if (fd < 0)
     return Qnil;
   return INT2NUM(fd);
@@ -1554,43 +1554,43 @@ struct const_int constvals[] = {
   { NULL, 0 }
 };
 
-/* Init_fusefs_lib()
+/* Init_rubyfuse_lib()
  *
- * Used by: Ruby, to initialize FuseFS.
+ * Used by: Ruby, to initialize RubyFuse.
  *
- * This is just stuff to set up and establish the Ruby module FuseFS and
+ * This is just stuff to set up and establish the Ruby module RubyFuse and
  *   its methods.
  */
 void
-Init_fusefs_lib() {
+Init_rubyfuse_lib() {
   struct const_int *vals;
 
   opened_head = NULL;
   init_time = time(NULL);
 
-  /* module FuseFS */
-  cFuseFS = rb_define_module("FuseFS");
+  /* module RubyFuse */
+  cRubyFuse = rb_define_module("RubyFuse");
 
   /* Our exception */
-  cFSException = rb_define_class_under(cFuseFS,"FuseFSException",rb_eStandardError);
+  cFSException = rb_define_class_under(cRubyFuse,"RubyFuseException",rb_eStandardError);
 
   /* def Fuse.run */
-  rb_define_singleton_method(cFuseFS,"fuse_fd",     (rbfunc) rf_fd, 0);
-  rb_define_singleton_method(cFuseFS,"reader_uid",  (rbfunc) rf_uid, 0);
-  rb_define_singleton_method(cFuseFS,"uid",         (rbfunc) rf_uid, 0);
-  rb_define_singleton_method(cFuseFS,"reader_gid",  (rbfunc) rf_gid, 0);
-  rb_define_singleton_method(cFuseFS,"gid",         (rbfunc) rf_gid, 0);
-  rb_define_singleton_method(cFuseFS,"process",     (rbfunc) rf_process, 0);
-  rb_define_singleton_method(cFuseFS,"mount_to",    (rbfunc) rf_mount_to, -1);
-  rb_define_singleton_method(cFuseFS,"mount_under", (rbfunc) rf_mount_to, -1);
-  rb_define_singleton_method(cFuseFS,"mountpoint",  (rbfunc) rf_mount_to, -1);
-  rb_define_singleton_method(cFuseFS,"set_root",    (rbfunc) rf_set_root, 1);
-  rb_define_singleton_method(cFuseFS,"root=",       (rbfunc) rf_set_root, 1);
-  rb_define_singleton_method(cFuseFS,"handle_editor",   (rbfunc) rf_handle_editor, 1);
-  rb_define_singleton_method(cFuseFS,"handle_editor=",  (rbfunc) rf_handle_editor, 1);
+  rb_define_singleton_method(cRubyFuse,"fuse_fd",     (rbfunc) rf_fd, 0);
+  rb_define_singleton_method(cRubyFuse,"reader_uid",  (rbfunc) rf_uid, 0);
+  rb_define_singleton_method(cRubyFuse,"uid",         (rbfunc) rf_uid, 0);
+  rb_define_singleton_method(cRubyFuse,"reader_gid",  (rbfunc) rf_gid, 0);
+  rb_define_singleton_method(cRubyFuse,"gid",         (rbfunc) rf_gid, 0);
+  rb_define_singleton_method(cRubyFuse,"process",     (rbfunc) rf_process, 0);
+  rb_define_singleton_method(cRubyFuse,"mount_to",    (rbfunc) rf_mount_to, -1);
+  rb_define_singleton_method(cRubyFuse,"mount_under", (rbfunc) rf_mount_to, -1);
+  rb_define_singleton_method(cRubyFuse,"mountpoint",  (rbfunc) rf_mount_to, -1);
+  rb_define_singleton_method(cRubyFuse,"set_root",    (rbfunc) rf_set_root, 1);
+  rb_define_singleton_method(cRubyFuse,"root=",       (rbfunc) rf_set_root, 1);
+  rb_define_singleton_method(cRubyFuse,"handle_editor",   (rbfunc) rf_handle_editor, 1);
+  rb_define_singleton_method(cRubyFuse,"handle_editor=",  (rbfunc) rf_handle_editor, 1);
 
   for (vals = constvals; vals->name; vals++) {
-    rb_define_const(cFuseFS, vals->name, INT2NUM(vals->val));
+    rb_define_const(cRubyFuse, vals->name, INT2NUM(vals->val));
   }
 
 #undef RMETHOD

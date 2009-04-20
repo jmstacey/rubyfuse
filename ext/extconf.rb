@@ -32,4 +32,4 @@ have_header('sys/statvfs.h') # OS X boxes have statvfs.h instead of statfs.h
 have_header('sys/statfs.h')
 
 # Create the makefile
-create_makefile('fusefs_lib')
+create_makefile('rubyfuse_lib')

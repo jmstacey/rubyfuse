@@ -1,12 +1,12 @@
 # openurifs.rb
 #
 
-require 'fusefs'
-include FuseFS
+require 'rubyfuse'
+include RubyFuse
 
 require 'open-uri'
 
-class OpenUriFS < FuseFS::FuseDir
+class OpenUriFS < RubyFuse::FuseDir
   def contents(path)
     # The 'readme' file
     []
@@ -44,10 +44,10 @@ if (File.basename($0) == File.basename(__FILE__))
 
   root = OpenUriFS.new
 
-  # Set the root FuseFS
-  FuseFS.set_root(root)
+  # Set the root RubyFuse
+  RubyFuse.set_root(root)
 
-  FuseFS.mount_under(dirname)
+  RubyFuse.mount_under(dirname)
 
-  FuseFS.run # This doesn't return until we're unmounted.
+  RubyFuse.run # This doesn't return until we're unmounted.
 end

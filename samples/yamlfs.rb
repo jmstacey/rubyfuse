@@ -1,12 +1,12 @@
 # yamlfs.rb
 #
 
-require 'fusefs'
-include FuseFS
+require 'rubyfuse'
+include RubyFuse
 
 require 'yaml'
 
-class YAMLFS < FuseFS::MetaDir
+class YAMLFS < RubyFuse::MetaDir
   def initialize(filename)
     @filename = filename
     begin
@@ -154,10 +154,10 @@ if (File.basename($0) == File.basename(__FILE__))
 
   root = YAMLFS.new(yamlfile)
 
-  # Set the root FuseFS
-  FuseFS.set_root(root)
+  # Set the root RubyFuse
+  RubyFuse.set_root(root)
 
-  FuseFS.mount_under(dirname)
+  RubyFuse.mount_under(dirname)
 
-  FuseFS.run # This doesn't return until we're unmounted.
+  RubyFuse.run # This doesn't return until we're unmounted.
 end

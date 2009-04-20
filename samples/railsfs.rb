@@ -21,10 +21,10 @@ follows:
 
 =end
 
-require 'fusefs'
+require 'rubyfuse'
 require File.dirname(__FILE__) + '/../config/environment'
 
-class RailsFS < FuseFS::FuseDir
+class RailsFS < RubyFuse::FuseDir
     def initialize
         @classes = {}
         require 'find'
@@ -69,8 +69,8 @@ end
 
 if (File.basename($0) == File.basename(__FILE__))
     root = RailsFS.new
-    FuseFS.set_root(root)
-    FuseFS.mount_under(ARGV[0])
-    FuseFS.run # This doesn't return until we're unmounted.
+    RubyFuse.set_root(root)
+    RubyFuse.mount_under(ARGV[0])
+    RubyFuse.run # This doesn't return until we're unmounted.
 end
 

@@ -6,10 +6,10 @@
 # Author: Justin Dossey (jbd@corp.podomatic.com)
 # Website: http://www.podomatic.com
 
-require 'fusefs'
-include FuseFS
+require 'rubyfuse'
+include RubyFuse
 
-class Mp3StripFS < FuseFS::FuseDir
+class Mp3StripFS < RubyFuse::FuseDir
   def initialize(path)
     @basedir = path
   end
@@ -122,7 +122,7 @@ class Mp3StripFS < FuseFS::FuseDir
   end
 end
 
-# the following is boilerplate from other fusefs examples.
+# the following is boilerplate from other rubyfuse examples.
 if (File.basename($0) == File.basename(__FILE__))
   if (ARGV.size != 2)
     puts "Usage: #{$0} <mountdir> <mp3dir>"
@@ -147,11 +147,11 @@ if (File.basename($0) == File.basename(__FILE__))
 
   root = Mp3StripFS.new(basepath)
 
-  # Set the root FuseFS
-  FuseFS.set_root(root)
+  # Set the root RubyFuse
+  RubyFuse.set_root(root)
 
-  FuseFS.mount_under(dirname)
+  RubyFuse.mount_under(dirname)
 
-  FuseFS.run # This doesn't return until we're unmounted.
+  RubyFuse.run # This doesn't return until we're unmounted.
 end
 

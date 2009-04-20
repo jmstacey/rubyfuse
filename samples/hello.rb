@@ -1,4 +1,4 @@
-require 'fusefs'
+require 'rubyfuse'
 
 class HelloDir
   def contents(path)
@@ -16,8 +16,8 @@ class HelloDir
 end
 
 hellodir = HelloDir.new
-FuseFS.set_root( hellodir )
+RubyFuse.set_root( hellodir )
 
 # Mount under a directory given on the command line.
-FuseFS.mount_under ARGV.shift
-FuseFS.run
+RubyFuse.mount_under ARGV.shift
+RubyFuse.run

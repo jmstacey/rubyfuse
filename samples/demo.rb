@@ -1,5 +1,5 @@
-require 'fusefs'
-include FuseFS
+require 'rubyfuse'
+include RubyFuse
 
 root = MetaDir.new
 
@@ -93,9 +93,9 @@ root.write_to('/animal',Randwords.new('duck','dog','cat','duck billed platypus',
 
 root.mkdir("/#{ENV['USER']}",DirLink.new(ENV['HOME']))
 
-# Set the root FuseFS
-FuseFS.set_root(root)
+# Set the root RubyFuse
+RubyFuse.set_root(root)
 
-FuseFS.mount_under(dirname,"allow_root")
+RubyFuse.mount_under(dirname,"allow_root")
 
-FuseFS.run # This doesn't return until we're unmounted.
+RubyFuse.run # This doesn't return until we're unmounted.

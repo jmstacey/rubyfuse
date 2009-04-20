@@ -1,26 +1,26 @@
-# FuseFS.rb
+# RubyFuse.rb
 #
-# The ruby portion of FuseFS main library
+# The ruby portion of RubyFuse main library
 #
 # This includes helper functions, common uses, etc.
 
-require 'fusefs_lib'
+require 'rubyfuse_lib'
 
-module FuseFS
+module RubyFuse
   VERSION = '0.7.0'
   @running = true
-  def FuseFS.run
-    fd = FuseFS.fuse_fd
+  def RubyFuse.run
+    fd = RubyFuse.fuse_fd
     io = IO.for_fd(fd)
     while @running
       reads, foo, errs = IO.select([io],nil,[io])
-      break unless FuseFS.process
+      break unless RubyFuse.process
     end
   end
-  def FuseFS.unmount
+  def RubyFuse.unmount
     system("fusermount -u #{@mountpoint}")
   end
-  def FuseFS.exit
+  def RubyFuse.exit
     @running = false
   end
   class FuseDir
@@ -150,7 +150,7 @@ module FuseFS
 
     # Write to a file
     def can_write?(path)
-      return false unless Process.uid == FuseFS.reader_uid
+      return false unless Process.uid == RubyFuse.reader_uid
       base, rest = split_path(path)
       case
       when base.nil?
@@ -185,7 +185,7 @@ module FuseFS
 
     # Delete a file
     def can_delete?(path)
-      return false unless Process.uid == FuseFS.reader_uid
+      return false unless Process.uid == RubyFuse.reader_uid
       base, rest = split_path(path)
       case
       when base.nil?
@@ -218,7 +218,7 @@ module FuseFS
 
     # Make a new directory
     def can_mkdir?(path)
-      return false unless Process.uid == FuseFS.reader_uid
+      return false unless Process.uid == RubyFuse.reader_uid
       base, rest = split_path(path)
       case
       when base.nil?
@@ -250,7 +250,7 @@ module FuseFS
 
     # Delete an existing directory.
     def can_rmdir?(path)
-      return false unless Process.uid == FuseFS.reader_uid
+      return false unless Process.uid == RubyFuse.reader_uid
       base, rest = split_path(path)
       case
       when base.nil?

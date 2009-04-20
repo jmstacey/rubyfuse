@@ -1,12 +1,12 @@
 # dictfs.rb
 #
 
-require 'fusefs'
-include FuseFS
+require 'rubyfuse'
+include RubyFuse
 
 require 'dict'
 
-class DictFS < FuseFS::FuseDir
+class DictFS < RubyFuse::FuseDir
   def initialize
     @servers = ['dict.org','alt0.dict.org']
     @database = DICT::ALL_DATABASES
@@ -74,10 +74,10 @@ if (File.basename($0) == File.basename(__FILE__))
 
   root = DictFS.new
 
-  # Set the root FuseFS
-  FuseFS.set_root(root)
+  # Set the root RubyFuse
+  RubyFuse.set_root(root)
 
-  FuseFS.mount_under(dirname)
+  RubyFuse.mount_under(dirname)
 
-  FuseFS.run # This doesn't return until we're unmounted.
+  RubyFuse.run # This doesn't return until we're unmounted.
 end

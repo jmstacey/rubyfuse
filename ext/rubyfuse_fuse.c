@@ -1,4 +1,4 @@
-/* fusefs_fuse.c */
+/* rubyfuse_fuse.c */
 
 /* This is rewriting most of the things that occur
  * in fuse_main up through fuse_loop */
@@ -31,7 +31,7 @@ static char *mounted_at = NULL;
 
 static int set_one_signal_handler(int signal, void (*handler)(int));
 
-int fusefs_fd() {
+int rubyfuse_fd() {
   int ret;
   struct fuse_chan *ch;
   struct fuse_session *se;
@@ -43,7 +43,7 @@ int fusefs_fd() {
 }
 
 int
-fusefs_unmount() {
+rubyfuse_unmount() {
   if (fuse_instance == NULL) return;
   if (mounted_at && fusech) {
     fuse_unmount(mounted_at, fusech);
@@ -55,14 +55,14 @@ fusefs_unmount() {
 }
 
 static void
-fusefs_ehandler() {
+rubyfuse_ehandler() {
   if (fuse_instance != NULL) {
-    fusefs_unmount();
+    rubyfuse_unmount();
   }
 }
 
 int
-fusefs_setup(char *mountpoint, const struct fuse_operations *op, char *opts) {
+rubyfuse_setup(char *mountpoint, const struct fuse_operations *op, char *opts) {
   char fuse_new_opts[1024];
   char fuse_mount_opts[1024];
   char nopts[1024];
@@ -85,13 +85,13 @@ fusefs_setup(char *mountpoint, const struct fuse_operations *op, char *opts) {
     goto err_unmount;
 
   /* Set signal handlers */
-  if (set_one_signal_handler(SIGHUP, fusefs_ehandler) == -1 ||
-      set_one_signal_handler(SIGINT, fusefs_ehandler) == -1 ||
-      set_one_signal_handler(SIGTERM, fusefs_ehandler) == -1 ||
+  if (set_one_signal_handler(SIGHUP, rubyfuse_ehandler) == -1 ||
+      set_one_signal_handler(SIGINT, rubyfuse_ehandler) == -1 ||
+      set_one_signal_handler(SIGTERM, rubyfuse_ehandler) == -1 ||
       set_one_signal_handler(SIGPIPE, SIG_IGN) == -1)
     return 0;
 
-  atexit(fusefs_ehandler);
+  atexit(rubyfuse_ehandler);
 
   /* We've initialized it! */
   mounted_at = strdup(mountpoint);
@@ -106,21 +106,21 @@ err_unmount:
 }
 
 int
-fusefs_uid() {
+rubyfuse_uid() {
   struct fuse_context *context = fuse_get_context();
   if (context) return context->uid;
   return -1;
 }
 
 int
-fusefs_gid() {
+rubyfuse_gid() {
   struct fuse_context *context = fuse_get_context();
   if (context) return context->gid;
   return -1;
 }
 
 int
-fusefs_process() {
+rubyfuse_process() {
   /* This gets exactly 1 command out of fuse fd. */
   /* Ideally, this is triggered after a select() returns */
   if (fuse_instance != NULL) {

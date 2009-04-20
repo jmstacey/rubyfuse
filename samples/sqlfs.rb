@@ -1,14 +1,14 @@
 # sqlfs.rb
 #
-# The SQL-db proof of concept for FuseFS
+# The SQL-db proof of concept for RubyFuse
 #
 # Author: Greg Millam
 
-require 'fusefs'
+require 'rubyfuse'
 
 require 'mysql'
 
-class SqlFS < FuseFS::FuseDir
+class SqlFS < RubyFuse::FuseDir
   class DBTable
     attr_accessor :name, :key, :fields
   end
@@ -123,11 +123,11 @@ if (File.basename($0) == File.basename(__FILE__))
 
   root = SqlFS.new(host,user,pass,db)
 
-  # Set the root FuseFS
-  FuseFS.set_root(root)
+  # Set the root RubyFuse
+  RubyFuse.set_root(root)
 
   # root.contents("/quotes")
 
-  FuseFS.mount_under(dirname)
-  FuseFS.run # This doesn't return until we're unmounted.
+  RubyFuse.mount_under(dirname)
+  RubyFuse.run # This doesn't return until we're unmounted.
 end
