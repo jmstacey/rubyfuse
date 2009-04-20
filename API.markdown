@@ -1,8 +1,8 @@
-#  RubyFuse API
+#  fuse-ruby API
 
 ## A Warning
 
-If you use DirLink (in demo.rb) or in any way access a RubyFuse filesystem from *within* the ruby script accessing the RubyFuse, then RubyFuse will hang, and the only recourse is a kill -KILL.
+If you use DirLink (in demo.rb) or in any way access a fuse-ruby filesystem from *within* the ruby script accessing the fuse-ruby, then fuse-ruby will hang, and the only recourse is a kill -KILL.
 
 Also: If there are any open files or shells with 'pwd's in your filesystem when you exit your ruby script, fuse *might* not actually be unmounted. To unmount a path yourself, run the command:
 
@@ -12,23 +12,23 @@ to unmount any FUSE filesystems mounted at <path>.
 
 ## The API
 
-RubyFuse provides a layer of abstraction to a programmer who wants to create a virtual filesystem via FUSE.
+fuse-ruby provides a layer of abstraction to a programmer who wants to create a virtual filesystem via FUSE.
 
-RubyFuse programs consist of two parts:
+fuse-ruby programs consist of two parts:
 
-1. 	RubyFuse, which is defined in 'RubyFuse.rb'
+1. 	fuse-ruby, which is defined in 'fuse-ruby.rb'
 2.	An object that defines a virtual directory. This must define a number of methods (given below, in "Directory Methods" section) in order to be usable.
 
-To write a RubyFuse program, you must:
+To write a fuse-ruby program, you must:
 
-1.	Define and create a Directory object that responds to the methods required by RubyFuse for its desired use.
+1.	Define and create a Directory object that responds to the methods required by fuse-ruby for its desired use.
 
-2.	Call RubyFuse.set_root <virtualdir> with the object defining your virtual
+2.	Call fuse-ruby.set_root <virtualdir> with the object defining your virtual
 		directory.
 
-3.	Mount RubyFuse under a real directory on your filesystem.
+3.	Mount fuse-ruby under a real directory on your filesystem.
 
-4.	Call RubyFuse.run to start receiving and executing events.
+4.	Call fuse-ruby.run to start receiving and executing events.
 
 Happy Filesystem Hacking!
 
@@ -40,7 +40,7 @@ This creates a filesystem that contains exactly 1 file: "hello.txt" that, when r
 
 This is not writable, and contains no other files.
 
-		require 'RubyFuse'
+		require 'fuse-ruby'
 
 		class HelloDir
 		  def contents(path)
@@ -55,11 +55,11 @@ This is not writable, and contains no other files.
 		end
 
 		hellodir = HelloDir.new
-		RubyFuse.set_root( hellodir )
+		fuse-ruby.set_root( hellodir )
 
 		# Mount under a directory given on the command line.
-		RubyFuse.mount_under ARGV.shift
-		RubyFuse.run
+		fuse-ruby.mount_under ARGV.shift
+		fuse-ruby.run
 
 ## Directory Methods
 
@@ -106,7 +106,7 @@ are automatically read-only.
                           their timestamps explicitly modified. I envision
                           this as a neat toy, maybe you can use it for a
                           push-button file?
-                            "touch button" -> unmounts RubyFuse?
+                            "touch button" -> unmounts fuse-ruby?
                             "touch musicfile.mp3" -> Play the mp3.
 
 If you want a lower level control of your file, then you can use:
@@ -158,17 +158,17 @@ Deleting dirs:
 	  :can_rmdir? will be checked before :rmdir
 
 
-## module RubyFuse
+## module fuse-ruby
 
 
-RubyFuse methods:
+fuse-ruby methods:
   
-  RubyFuse.set_root(object)
+  fuse-ruby.set_root(object)
       Set the root virtual directory to <object>. All queries for obtaining
       file information is directed at object.
   
-  RubyFuse.mount_under(path[,opt[,opt,...]])
-      This will cause RubyFuse to virtually mount itself under the given path.
+  fuse-ruby.mount_under(path[,opt[,opt,...]])
+      This will cause fuse-ruby to virtually mount itself under the given path.
       'path' is required to be a valid directory in your actual filesystem.
 
       'opt's are FUSE options. Most likely, you will only want 'allow_other'
@@ -176,34 +176,34 @@ RubyFuse methods:
       will let other users, including root, access your filesystem. allow_root
       will only allow root to access it.
       
-      Also available for RubyFuse users are:
+      Also available for fuse-ruby users are:
         default_permissions, max_read=N, fsname=NAME.
 
       For more information, look at FUSE.
 
       (P.S: I know FUSE allows other options, but I don't think any of the
-      rest will do any good with RubyFuse. If you think otherwise, please let me
+      rest will do any good with fuse-ruby. If you think otherwise, please let me
       know!)
 
-  RubyFuse.run
+  fuse-ruby.run
       This is the final step to make your virtual filesystem accessible. It is
       recommended you run this as your main thread, but you can thread off to
       run this.
 
-  RubyFuse.handle_editor = bool (true by default)
-      If handle_editor is true, then RubyFuse will attempt to capture all editor
+  fuse-ruby.handle_editor = bool (true by default)
+      If handle_editor is true, then fuse-ruby will attempt to capture all editor
       files and prevent them from being passed to FuseRoot. It also prevents
       created and unmodified files from being passed as well, as vim (among
       others) will attempt to create and then remove a file that does not
       exist.
 
-  RubyFuse.reader_uid and RubyFuse.reader_gid
+  fuse-ruby.reader_uid and fuse-ruby.reader_gid
       When the filesystem is accessed, the accessor's uid or gid is returned
-      by RubyFuse.reader_uid and RubyFuse.reader_gid. You can use this in
+      by fuse-ruby.reader_uid and fuse-ruby.reader_gid. You can use this in
       determining your permissions, or even provide different files for
       different users!
   
-  RubyFuse.fuse_fd and RubyFuse.process
+  fuse-ruby.fuse_fd and fuse-ruby.process
       These are not intended for use by the programmer. If you want to muck
       with this, read the code to see what they do :D.
 
@@ -212,7 +212,7 @@ RubyFuse methods:
 FuseDir
 ----------
 
-RubyFuse::FuseDir defines the methods "split_path" and "scan_path". You
+fuse-ruby::FuseDir defines the methods "split_path" and "scan_path". You
 should typically inherit from FuseDir in your own directory objects.
 
 	  base, rest = split_path(path)   # base is the file or directory in the
@@ -238,7 +238,7 @@ Usage:
 	  root.write_to("/hello/world","Hello, World!\n")
 	  root.write_to("/hello/everybody","Hello, Everybody!\n")
 
-	  RubyFuse.set_root(root)
+	  fuse-ruby.set_root(root)
 
 Because MetaDir is fully recursive, you can mount your own or other defined
 directory structures under it. For example, to mount a dictionary filesystem
@@ -251,4 +251,4 @@ Conclusion
 
 Happy Hacking! If you do anything neat with this, please let me know!
 
-Thanks for using RubyFuse!
+Thanks for using fuse-ruby!

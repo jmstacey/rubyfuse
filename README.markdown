@@ -1,11 +1,11 @@
-RubyFuse
+fuse-ruby
 ============
 
-RubyFuse is a library aimed at allowing Ruby programmers to quickly and easily create virtual filesystems with little more than a few lines of code.
+fuse-ruby is a library aimed at allowing Ruby programmers to quickly and easily create virtual filesystems with little more than a few lines of code.
 
 A "hello world" filesystem equivalent to the one demonstrated on fuse.sourceforge.org is just 20 lines of code!
 
-RubyFuse is NOT a full implementation of the FUSE API ... yet.
+fuse-ruby is NOT a full implementation of the FUSE API ... yet.
 
 Requirements
 -------------
@@ -31,7 +31,7 @@ If you need to supply alternative path information for the FUSE libraries, follo
 Usage
 -------------
 
-Some sample ruby filesystems are listed in "samples/" When you run a RubyFuse script, it will listen on a socket indefinitely, so either background the script or open another terminal to explore the filesystem.
+Some sample ruby filesystems are listed in "samples/" When you run a fuse-ruby script, it will listen on a socket indefinitely, so either background the script or open another terminal to explore the filesystem.
 
 API.rdoc contains more usage information.
 
