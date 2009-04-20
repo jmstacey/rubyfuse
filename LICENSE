@@ -1,4 +1,4 @@
-fuse-ruby is a fork of FuseFS, written by Greg Millam. Both fuse-ruby and FuseFS
+RubyFuse is a fork of FuseFS, written by Greg Millam. Both RubyFuse and FuseFS
 are available under the MIT license.
 
 Copyright (c) 2009 Jon Stacey.

@@ -4,9 +4,9 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name        = "fuse-ruby"
+    gem.name        = "RubyFuse"
     gem.summary     = "Define filesystems entirely in Ruby."
-    gem.description = "fuse-ruby lets programmers create a mounted filesystems entirely defined in Ruby."
+    gem.description = "RubyFuse lets programmers create a mounted filesystems entirely defined in Ruby."
     gem.email       = "jon@jonsview.com"
     gem.homepage    = "http://jonsview.com/projects/rubyfuse"
     gem.authors     = ["Jon Stacey", "Greg Millam"]
@@ -69,7 +69,7 @@ Rake::RDocTask.new do |rdoc|
   end
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "fuse-ruby #{version}"
+  rdoc.title = "RubyFuse #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
