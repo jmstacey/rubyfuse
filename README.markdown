@@ -1,4 +1,5 @@
-# RubyFuse
+RubyFuse
+============
 
 RubyFuse is a library aimed at allowing Ruby programmers to quickly and easily create virtual filesystems with little more than a few lines of code.
 
@@ -6,14 +7,16 @@ A "hello world" filesystem equivalent to the one demonstrated on fuse.sourceforg
 
 RubyFuse is NOT a full implementation of the FUSE API ... yet.
 
-## Requirements
+Requirements
+-------------
 
 * Linux or Mac OS X
 * FUSE or MacFuse
 * Ruby 1.8
 (* C compiler)
 
-## Install
+Install
+-------------
 
 		$ sudo ruby setup.rb
 
@@ -25,13 +28,14 @@ If you need to supply alternative path information for the FUSE libraries, follo
 		$ ruby setup.rb setup
 		$ sudo ruby setup.rb install
 
-## Usage
+Usage
+-------------
 
 Some sample ruby filesystems are listed in "samples/" When you run a RubyFuse script, it will listen on a socket indefinitely, so either background the script or open another terminal to explore the filesystem.
 
 API.rdoc contains more usage information.
 
-## Copyright
-
+Copyright
+------------
 Copyright (c) 2005 Greg Millam.
 Copyright (c) 2009 Jon Stacey. See LICENSE for details.
