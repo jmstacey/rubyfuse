@@ -53,9 +53,7 @@ end
 
 task :default => [ :all ]
 
-task :install do
-  ruby %{setup.rb install}
-end
+task :install => [ :all ]
 
 task :clean do
   ruby %{setup.rb clean}
