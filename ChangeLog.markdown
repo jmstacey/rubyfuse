@@ -9,8 +9,6 @@ Forked FuseFS using CVS checkout from RubyForge on April 17, 2009
 * Project renamed to RubyFuse
 * Code refactoring: class names now "RubyFuse"
 * Detects MacFuse installed via MacPorts out of the box
-* Arguments such as "--with-fuse-lib" or "--with-fuse-dir" will now be 
-	properly caught by setup.rb and passed on to extconf.rb.
 
 FuseFS 0.6
 ---------------

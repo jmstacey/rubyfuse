@@ -20,18 +20,18 @@ Install
 
 RubyFuse is available as a Ruby Gem. Installation is as easy as:
 
-		$ gem sources -a http://gems.github.com
-		$ gem install jmstacey-rubyfuse
+    $ gem sources -a http://gems.github.com
+    $ gem install jmstacey-rubyfuse
 
 Manually installations can be performed with this:
 
-		$ ruby setup.rb
+    $ ruby setup.rb
 		
 More advanced installation options are available with setup.rb. Try "ruby setup.rb --help". If you need to supply alternative path information for the FUSE libraries, follow this example:
 
-		$ ruby setup.rb config --with-fuse-dir=/opt/local/include --with-fuse-lib=/opt/local/lib
-		$ ruby setup.rb setup
-		$ sudo ruby setup.rb install
+    $ ruby setup.rb config -- --with-fuse-dir=/opt/local/include --with-fuse-lib=/opt/local/lib
+    $ ruby setup.rb setup
+    $ sudo ruby setup.rb install
 
 Usage
 -------------
@@ -43,4 +43,5 @@ API.markdown contains more usage information along with the official RDoc.
 Copyright
 ------------
 Copyright (c) 2005 Greg Millam.
+
 Copyright (c) 2009 Jon Stacey. See LICENSE for details.
