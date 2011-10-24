@@ -1140,8 +1140,9 @@ rf_truncate(const char *path, off_t offset) {
       VALUE newstr = rb_str_new2("");
       rf_call(path,id_write_to,newstr);
     } else {
-      long size;
-      char *str = rb_str2cstr(body,&size);
+      char *str = StringValueCStr(body);
+      long size = strlen(str);
+      
 
       /* Just in case offset is bigger than the file. */
       if (offset >= size) return 0;

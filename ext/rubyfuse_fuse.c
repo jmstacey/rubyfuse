@@ -42,7 +42,7 @@ int rubyfuse_fd() {
   return ret;
 }
 
-int
+void
 rubyfuse_unmount() {
   if (fuse_instance == NULL) return;
   if (mounted_at && fusech) {
