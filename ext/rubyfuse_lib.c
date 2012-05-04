@@ -706,10 +706,9 @@ rf_open(const char *path, struct fuse_file_info *fi) {
     /* We have the body, now save it the entire contents to our
      * opened_file lists. */
     newfile = ALLOC(opened_file);
-    value = StringValueCStr(body);
-    newfile->size = strlen(value);
+    newfile->size = RSTRING_LEN(body);
     newfile->value = ALLOC_N(char,(newfile->size)+1);
-    memcpy(newfile->value,value,newfile->size);
+    memcpy(newfile->value,RSTRING_PTR(body),newfile->size);
     newfile->value[newfile->size] = '\0';
     newfile->writesize = 0;
     newfile->zero_offset = 0;
